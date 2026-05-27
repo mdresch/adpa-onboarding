@@ -406,8 +406,7 @@ const Matrix3DObject: React.FC<{ scrollVal: number }> = ({ scrollVal }) => {
           <bufferAttribute
             attach="attributes-position"
             count={pointsPositions.length / 3}
-            array={pointsPositions}
-            itemSize={3}
+            args={[pointsPositions, 3]}
           />
         </bufferGeometry>
         <pointsMaterial 
@@ -560,15 +559,6 @@ const FloatingCarouselSection: React.FC<{
   is3DMode: boolean;
 }> = ({ viewportRef, is3DMode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  const handleScroll = () => {
-    const el = containerRef.current;
-    if (!el) return;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 0) return;
-    setScrollProgress(el.scrollLeft / maxScroll);
-  };
 
   const scroll = (direction: 'left' | 'right') => {
     const el = containerRef.current;
@@ -1153,7 +1143,7 @@ export const EverswapShowcasePage: React.FC = () => {
       }
     });
 
-    cards.forEach((card, index) => {
+    cards.forEach((_card, index) => {
       if (index === 0) return;
 
       // Translate the vertical track upwards
@@ -1354,7 +1344,7 @@ export const EverswapShowcasePage: React.FC = () => {
     });
 
     // Phase 2: Tabs on the left sidebar pop out one-by-one
-    tabs.forEach((tab, index) => {
+    tabs.forEach((tab) => {
       tl.to(tab, {
         scale: 1.05,
         borderColor: 'rgba(13, 13, 12, 0.06)',

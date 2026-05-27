@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChapterSection } from '../components/ChapterSection';
 import { FloatingTimeline } from '../components/FloatingTimeline';
-import { ChevronDown, BarChart3, ShieldCheck, Zap, ArrowRight, Brain, Target, Users, Play, TrendingUp, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, BarChart3, ShieldCheck, Zap, ArrowRight, Brain, Target, Users, Play, TrendingUp, AlertTriangle } from 'lucide-react';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();

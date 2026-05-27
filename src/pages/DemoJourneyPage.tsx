@@ -1,11 +1,11 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChapterSection } from '../components/ChapterSection';
 import { FloatingTimeline } from '../components/FloatingTimeline';
 import { 
   ArrowLeft, ChevronDown, LayoutDashboard, Compass, Files, AlertCircle, Lightbulb, 
   BarChart, TrendingUp, Grid, Shield, CheckSquare, Play, RefreshCw, Layers,
-  FileText, AlertTriangle, ArrowRight, CheckCircle2, CircleDashed, Clock
+  FileText, AlertTriangle, ArrowRight, CircleDashed, Clock
 } from 'lucide-react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
@@ -91,20 +91,6 @@ export const DemoJourneyPage: React.FC = () => {
 
   const isHighlighted = (tourKey: string) => {
     return isTourActive && TOUR_STEPS[tourStepIndex]?.highlightSelector === tourKey;
-  };
-
-  const getHighlightClass = (tourKey: string) => {
-    if (isTourActive && TOUR_STEPS[tourStepIndex]?.highlightSelector === tourKey) {
-      if (isHighlightActive) {
-        const isWide = ['audit-table', 'gap-list', 'rec-grid', 'bench-bars', 'roi-cards', 'domain-grid', 'quality-rings', 'sprint-board', 'baseline-center'].includes(tourKey);
-        const maxWidthClass = isWide ? 'max-w-4xl w-[95%]' : 'max-w-md w-[85%]';
-        const scaleClass = isWide ? 'scale-[1.02] md:scale-[1.05]' : 'scale-[1.2] md:scale-[1.35]';
-        return `absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${scaleClass} z-50 shadow-[0_0_80px_rgba(59,130,246,0.8)] border border-blue-500 bg-slate-800 p-6 rounded-xl ${maxWidthClass} transition-all duration-500`;
-      } else {
-        return "transition-all duration-500";
-      }
-    }
-    return "transition-all duration-300";
   };
 
   useEffect(() => {

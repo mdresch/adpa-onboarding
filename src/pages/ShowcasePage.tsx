@@ -4,8 +4,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   ArrowLeft, Zap, Layers, MousePointer, Move, Eye, Sparkles,
-  RefreshCw, Play, Pause, ChevronRight, Star, Box, Circle,
-  Triangle, Hexagon, Clock, ArrowRight, Check, X
+  RefreshCw, Play, ChevronRight, Star, Box, Circle,
+  Triangle, Hexagon, Clock, ArrowRight, Check
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
