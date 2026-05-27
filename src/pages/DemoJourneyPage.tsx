@@ -177,7 +177,6 @@ export const DemoJourneyPage: React.FC = () => {
   }, [isTourActive]);
 
   useEffect(() => {
-    let intervalId: any;
     if (!isTourActive || !isDashboardInView) {
       setStreamedText("");
       setIsHighlightActive(false);
@@ -188,25 +187,29 @@ export const DemoJourneyPage: React.FC = () => {
     setStreamedText("");
 
     const targetText = TOUR_STEPS[tourStepIndex]?.description || "";
+    const startTime = Date.now();
+    const delay = 1000;
+    const speed = 15;
 
-    const startDelay = setTimeout(() => {
-      setIsHighlightActive(true);
+    const timerId = setInterval(() => {
+      const elapsed = Date.now() - startTime;
       
-      let charIndex = 0;
-      intervalId = setInterval(() => {
-        if (charIndex < targetText.length) {
-          setStreamedText(prev => prev + targetText.charAt(charIndex));
-          charIndex++;
-        } else {
-          clearInterval(intervalId);
-        }
-      }, 15);
-    }, 1000); // 1s delay before popout & typewriter
+      if (elapsed < delay) {
+        return;
+      }
+      
+      setIsHighlightActive(true);
+      const charCount = Math.floor((elapsed - delay) / speed);
+      const newText = targetText.slice(0, charCount);
+      
+      setStreamedText(newText);
+      
+      if (charCount >= targetText.length) {
+        clearInterval(timerId);
+      }
+    }, speed);
 
-    return () => {
-      clearTimeout(startDelay);
-      if (intervalId) clearInterval(intervalId);
-    };
+    return () => clearInterval(timerId);
   }, [tourStepIndex, isTourActive, isDashboardInView]);
 
   // Baseline states
