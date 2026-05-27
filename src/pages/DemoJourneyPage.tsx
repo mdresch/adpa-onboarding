@@ -15,7 +15,7 @@ const TOUR_STEPS = [
     tab: 'Overview',
     highlightSelector: 'maturity-card',
     featureName: "Executive Maturity Scorecard",
-    description: "Aggregates overall organization PMBOK maturity and critical action counts for leadership review.",
+    description: "Aggregates the overall organization PMBOK maturity and critical action counts for leadership review.",
   },
   {
     tab: 'Maturity Journey',
