@@ -322,7 +322,7 @@ export const DemoJourneyPage: React.FC = () => {
       <div className="grid grid-cols-3 gap-6 mb-8">
         <div className={`bg-slate-800 rounded-lg p-5 border border-slate-700 transition-all duration-300 ${
           isHighlighted('maturity-card') 
-            ? 'ring-4 ring-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-[1.06] -translate-y-2 z-20 relative bg-slate-750' 
+            ? 'ring-4 ring-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-[1.06] -translate-y-2 z-50 relative bg-slate-750' 
             : ''
         }`}>
           <div className="text-sm text-slate-400 mb-2">Overall Maturity</div>
@@ -402,7 +402,7 @@ export const DemoJourneyPage: React.FC = () => {
             <div key={i} className="flex flex-col items-center gap-4 w-32 text-center">
               <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center bg-slate-900 transition-all duration-300 ${stage.current ? 'border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.6)]' : stage.active ? 'border-cyan-500/50' : 'border-slate-700'} ${
                 isHighlighted('current-state-badge') && stage.current
-                  ? 'ring-4 ring-blue-500 shadow-[0_0_45px_rgba(59,130,246,0.7)] scale-[1.25] z-20 relative bg-slate-850'
+                  ? 'ring-4 ring-blue-500 shadow-[0_0_45px_rgba(59,130,246,0.7)] scale-[1.25] z-50 relative bg-slate-850'
                   : ''
               }`}>
                 {stage.current ? <Compass size={20} className="text-cyan-400 animate-pulse" /> : <span className={`font-bold ${stage.active ? 'text-cyan-500' : 'text-slate-600'}`}>{stage.level}</span>}
@@ -427,7 +427,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Analyzed Documents</h2>
       <div className={`bg-slate-800 border border-slate-700 rounded-lg overflow-hidden transition-all duration-300 ${
         isHighlighted('audit-table') 
-          ? 'ring-4 ring-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-[1.03] z-20 relative bg-slate-750' 
+          ? 'ring-4 ring-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-[1.03] z-50 relative bg-slate-750' 
           : ''
       }`}>
         <table className="w-full text-left text-sm">
@@ -479,7 +479,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Identified Gaps</h2>
       <div className={`grid gap-4 transition-all duration-300 ${
         isHighlighted('gap-list') 
-          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-20 relative' 
+          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-50 relative' 
           : ''
       }`}>
         {[
@@ -513,7 +513,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">AI Recommendations</h2>
       <div className={`grid md:grid-cols-2 gap-6 transition-all duration-300 ${
         isHighlighted('rec-grid') 
-          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-20 relative' 
+          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-50 relative' 
           : ''
       }`}>
         {[
@@ -540,7 +540,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Industry Benchmarks</h2>
       <div className={`bg-slate-800 rounded-lg p-8 border border-slate-700 transition-all duration-300 ${
         isHighlighted('bench-bars') 
-          ? 'ring-4 ring-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-[1.03] z-20 relative bg-slate-750' 
+          ? 'ring-4 ring-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.5)] scale-[1.03] z-50 relative bg-slate-750' 
           : ''
       }`}>
         <div className="space-y-8">
@@ -594,7 +594,7 @@ export const DemoJourneyPage: React.FC = () => {
       
       <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 transition-all duration-300 ${
         isHighlighted('roi-cards') 
-          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.03] z-20 relative' 
+          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.03] z-50 relative' 
           : ''
       }`}>
         <div className="bg-gradient-to-br from-emerald-900/40 to-slate-800 rounded-lg p-6 border border-emerald-500/30 text-center">
@@ -624,7 +624,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Performance Domains (PMBOK 8)</h2>
       <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-300 ${
         isHighlighted('domain-grid') 
-          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-20 relative' 
+          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-50 relative' 
           : ''
       }`}>
         {[
@@ -657,7 +657,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Quality Analysis</h2>
       <div className={`grid md:grid-cols-3 gap-6 mb-8 transition-all duration-300 ${
         isHighlighted('quality-rings') 
-          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.03] z-20 relative' 
+          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.03] z-50 relative' 
           : ''
       }`}>
         {[
@@ -683,7 +683,7 @@ export const DemoJourneyPage: React.FC = () => {
       <h2 className="text-2xl font-bold text-white mb-6">Action Plan (Sprints)</h2>
       <div className={`flex gap-6 overflow-x-auto pb-4 transition-all duration-300 ${
         isHighlighted('sprint-board') 
-          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-20 relative' 
+          ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_40px_rgba(59,130,246,0.4)] scale-[1.02] z-50 relative' 
           : ''
       }`}>
         {/* Sprint 1 */}
@@ -896,7 +896,7 @@ export const DemoJourneyPage: React.FC = () => {
         {/* Side by Side Comparison Grid */}
         <div className={`grid md:grid-cols-2 gap-6 transition-all duration-300 ${
           isHighlighted('baseline-center') 
-            ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_45px_rgba(59,130,246,0.5)] scale-[1.02] z-20 relative' 
+            ? 'ring-4 ring-blue-500/50 p-4 bg-slate-850 rounded-xl shadow-[0_0_45px_rgba(59,130,246,0.5)] scale-[1.02] z-50 relative' 
             : ''
         }`}>
           {/* Reference Column */}
