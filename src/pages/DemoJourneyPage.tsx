@@ -87,7 +87,55 @@ export const DemoJourneyPage: React.FC = () => {
   const [isHighlightActive, setIsHighlightActive] = useState(false);
   const [isDashboardInView, setIsDashboardInView] = useState(false);
   const [streamedText, setStreamedText] = useState("");
+  const [maturityProgress, setMaturityProgress] = useState(0); // 0 to 100
+  const [tabProgress, setTabProgress] = useState(0); // 0 to 100
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  // General tab progress streaming effect
+  useEffect(() => {
+    if (!isDashboardInView) {
+      setTabProgress(0);
+      return;
+    }
+
+    setTabProgress(0);
+    const duration = 1000;
+    const steps = 50;
+    const interval = duration / steps;
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current += 2;
+      setTabProgress(current);
+      if (current >= 100) {
+        clearInterval(timer);
+      }
+    }, interval);
+    
+    return () => clearInterval(timer);
+  }, [activeTab, isDashboardInView]);
+
+  useEffect(() => {
+    if (activeTab === 'Maturity Journey' && isDashboardInView) {
+      setMaturityProgress(0);
+      const duration = 2000; // 2 seconds
+      const steps = 100;
+      const interval = duration / steps;
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += 1;
+        setMaturityProgress(current);
+        if (current >= 50) { // 50% is Level 3 (Defined) in our 5-step layout
+          clearInterval(timer);
+        }
+      }, interval);
+      
+      return () => clearInterval(timer);
+    } else {
+      setMaturityProgress(0);
+    }
+  }, [activeTab, isDashboardInView]);
 
   const isHighlighted = (tourKey: string) => {
     return isTourActive && TOUR_STEPS[tourStepIndex]?.highlightSelector === tourKey;
@@ -327,21 +375,21 @@ export const DemoJourneyPage: React.FC = () => {
         }`}>
           <div className="text-sm text-slate-400 mb-2">Overall Maturity</div>
           <div className="flex items-end gap-3">
-            <div className="text-4xl font-bold text-white">3.5</div>
+            <div className="text-4xl font-bold text-white">{(3.5 * (tabProgress / 100)).toFixed(1)}</div>
             <div className="text-sm text-cyan-400 mb-1">Defined</div>
           </div>
         </div>
         <div className="bg-slate-800 rounded-lg p-5 border border-slate-700">
           <div className="text-sm text-slate-400 mb-2">Quality Score</div>
           <div className="flex items-end gap-3">
-            <div className="text-4xl font-bold text-white">72%</div>
+            <div className="text-4xl font-bold text-white">{Math.round(72 * (tabProgress / 100))}%</div>
             <div className="text-sm text-emerald-400 mb-1 flex items-center gap-1"><TrendingUp size={14}/> Top Quartile</div>
           </div>
         </div>
         <div className="bg-slate-800 rounded-lg p-5 border border-slate-700">
           <div className="text-sm text-slate-400 mb-2">Critical Gaps</div>
           <div className="flex items-end gap-3">
-            <div className="text-4xl font-bold text-rose-400">8</div>
+            <div className="text-4xl font-bold text-rose-400">{Math.round(8 * (tabProgress / 100))}</div>
             <div className="text-sm text-slate-400 mb-1">Items require attention</div>
           </div>
         </div>
@@ -384,43 +432,79 @@ export const DemoJourneyPage: React.FC = () => {
     </div>
   );
 
-  const renderMaturityJourney = () => (
-    <div className="animate-fade-in-up">
-      <h2 className="text-2xl font-bold text-white mb-6">Maturity Journey</h2>
-      <div className="bg-slate-800 rounded-lg p-10 border border-slate-700 relative overflow-hidden">
-        <div className="absolute top-1/2 left-10 right-10 h-1 bg-slate-700 -translate-y-1/2 z-0"></div>
-        <div className="absolute top-1/2 left-10 right-[40%] h-1 bg-cyan-500 -translate-y-1/2 z-0 shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
-        
-        <div className="flex justify-between relative z-10">
-          {[
-            { level: 1, name: 'Initial', active: true },
-            { level: 2, name: 'Managed', active: true },
-            { level: 3, name: 'Defined', active: true, current: true },
-            { level: 4, name: 'Quantitatively Managed', active: false },
-            { level: 5, name: 'Optimizing', active: false }
-          ].map((stage, i) => (
-            <div key={i} className="flex flex-col items-center gap-4 w-32 text-center">
-              <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center bg-slate-900 transition-all duration-300 ${stage.current ? 'border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.6)]' : stage.active ? 'border-cyan-500/50' : 'border-slate-700'} ${
-                isHighlighted('current-state-badge') && stage.current
-                  ? 'ring-4 ring-blue-500 shadow-[0_0_45px_rgba(59,130,246,0.7)] scale-[1.25] z-50 relative bg-slate-850'
-                  : ''
-              }`}>
-                {stage.current ? <Compass size={20} className="text-cyan-400 animate-pulse" /> : <span className={`font-bold ${stage.active ? 'text-cyan-500' : 'text-slate-600'}`}>{stage.level}</span>}
-              </div>
-              <div>
-                <div className={`font-semibold ${stage.current ? 'text-cyan-400' : stage.active ? 'text-slate-300' : 'text-slate-500'}`}>{stage.name}</div>
-                {stage.current && <div className="text-xs text-cyan-500/80 mt-1">Current State</div>}
-              </div>
-            </div>
-          ))}
+  const renderMaturityJourney = () => {
+    const stages = [
+      { level: 1, name: 'Initial', threshold: 0 },
+      { level: 2, name: 'Managed', threshold: 25 },
+      { level: 3, name: 'Defined', threshold: 50 },
+      { level: 4, name: 'Quantitatively Managed', threshold: 75 },
+      { level: 5, name: 'Optimizing', threshold: 100 }
+    ];
+
+    return (
+      <div className="animate-fade-in-up">
+        <h2 className="text-2xl font-bold text-white mb-6">Maturity Journey</h2>
+        <div className="bg-slate-800 rounded-lg p-10 border border-slate-700 relative overflow-hidden">
+          {/* Background Path */}
+          <div className="absolute top-1/2 left-10 right-10 h-1 bg-slate-700 -translate-y-1/2 z-0"></div>
+          
+          {/* Active Streaming Path */}
+          <div 
+            className="absolute top-1/2 left-10 h-1 bg-cyan-500 -translate-y-1/2 z-0 shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-100 ease-linear"
+            style={{ width: `calc(${maturityProgress}% - 40px)` }}
+          ></div>
+          
+          <div className="flex justify-between relative z-10">
+            {stages.map((stage, i) => {
+              const isActive = maturityProgress >= stage.threshold;
+              const isCurrent = (stage.level === 3 && maturityProgress >= 50) || 
+                                (stage.level === 2 && maturityProgress >= 25 && maturityProgress < 50) ||
+                                (stage.level === 1 && maturityProgress < 25);
+
+              return (
+                <div key={i} className="flex flex-col items-center gap-4 w-32 text-center">
+                  <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center bg-slate-900 transition-all duration-500 ${
+                    isCurrent ? 'border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.6)]' : 
+                    isActive ? 'border-cyan-500/50' : 'border-slate-700'
+                  } ${
+                    isHighlighted('current-state-badge') && isCurrent
+                      ? 'ring-4 ring-blue-500 shadow-[0_0_45px_rgba(59,130,246,0.7)] scale-[1.25] z-50 relative bg-slate-850'
+                      : ''
+                  }`}>
+                    {isCurrent ? (
+                      <Compass size={20} className="text-cyan-400 animate-pulse" />
+                    ) : (
+                      <span className={`font-bold ${isActive ? 'text-cyan-500' : 'text-slate-600'}`}>
+                        {stage.level}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <div className={`font-semibold transition-colors duration-500 ${
+                      isCurrent ? 'text-cyan-400' : isActive ? 'text-slate-300' : 'text-slate-500'
+                    }`}>
+                      {stage.name}
+                    </div>
+                    {isCurrent && stage.level === 3 && (
+                      <div className="text-xs text-cyan-500/80 mt-1">Current State</div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="mt-8 bg-cyan-950/30 border border-cyan-900/50 rounded-lg p-6">
+          <h4 className="text-cyan-400 font-semibold mb-2 flex items-center gap-2">
+            <ArrowRight size={16}/> Path to Level 4
+          </h4>
+          <p className="text-slate-300 text-sm leading-relaxed">
+            To reach "Quantitatively Managed", the organization must establish measurable quality goals and quantitative process control metrics across all delivery units.
+          </p>
         </div>
       </div>
-      <div className="mt-8 bg-cyan-950/30 border border-cyan-900/50 rounded-lg p-6">
-        <h4 className="text-cyan-400 font-semibold mb-2 flex items-center gap-2"><ArrowRight size={16}/> Path to Level 4</h4>
-        <p className="text-slate-300 text-sm leading-relaxed">To reach "Quantitatively Managed", the organization must establish measurable quality goals and quantitative process control metrics across all delivery units.</p>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderDocuments = () => (
     <div className="animate-fade-in-up">
@@ -456,9 +540,14 @@ export const DemoJourneyPage: React.FC = () => {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                      <div className={`h-full bg-${doc.color}-500`} style={{ width: `${doc.score}%` }}></div>
+                      <div 
+                        className={`h-full bg-${doc.color}-500 transition-all duration-300 ease-out`} 
+                        style={{ width: `${doc.score * (tabProgress / 100)}%` }}
+                      ></div>
                     </div>
-                    <span className="text-slate-300 font-mono">{doc.score}%</span>
+                    <span className="text-slate-300 font-mono">
+                      {Math.round(doc.score * (tabProgress / 100))}%
+                    </span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -559,25 +648,25 @@ export const DemoJourneyPage: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <div className="w-24 text-xs text-cyan-400 font-medium text-right">Your Score</div>
                   <div className="flex-1 bg-slate-900 rounded-full h-2">
-                    <div className="bg-cyan-500 h-2 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]" style={{ width: `${metric.you}%` }}></div>
+                    <div className="bg-cyan-500 h-2 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)] transition-all duration-300" style={{ width: `${metric.you * (tabProgress / 100)}%` }}></div>
                   </div>
-                  <div className="w-8 text-xs font-mono text-slate-400">{metric.you}%</div>
+                  <div className="w-8 text-xs font-mono text-slate-400">{Math.round(metric.you * (tabProgress / 100))}%</div>
                 </div>
                 {/* Industry Average */}
                 <div className="flex items-center gap-4">
                   <div className="w-24 text-xs text-slate-500 font-medium text-right">Industry Avg</div>
                   <div className="flex-1 bg-slate-900 rounded-full h-1.5">
-                    <div className="bg-slate-600 h-1.5 rounded-full" style={{ width: `${metric.industry}%` }}></div>
+                    <div className="bg-slate-600 h-1.5 rounded-full transition-all duration-300" style={{ width: `${metric.industry * (tabProgress / 100)}%` }}></div>
                   </div>
-                  <div className="w-8 text-xs font-mono text-slate-500">{metric.industry}%</div>
+                  <div className="w-8 text-xs font-mono text-slate-500">{Math.round(metric.industry * (tabProgress / 100))}%</div>
                 </div>
                 {/* Top Performers */}
                 <div className="flex items-center gap-4">
                   <div className="w-24 text-xs text-emerald-500/70 font-medium text-right">Top 10%</div>
                   <div className="flex-1 bg-slate-900 rounded-full h-1.5">
-                    <div className="bg-emerald-500/50 h-1.5 rounded-full" style={{ width: `${metric.top}%` }}></div>
+                    <div className="bg-emerald-500/50 h-1.5 rounded-full transition-all duration-300" style={{ width: `${metric.top * (tabProgress / 100)}%` }}></div>
                   </div>
-                  <div className="w-8 text-xs font-mono text-slate-500">{metric.top}%</div>
+                  <div className="w-8 text-xs font-mono text-slate-500">{Math.round(metric.top * (tabProgress / 100))}%</div>
                 </div>
               </div>
             </div>
@@ -600,19 +689,19 @@ export const DemoJourneyPage: React.FC = () => {
         <div className="bg-gradient-to-br from-emerald-900/40 to-slate-800 rounded-lg p-6 border border-emerald-500/30 text-center">
           <div className="text-emerald-400 mb-2 flex justify-center"><TrendingUp size={24} /></div>
           <div className="text-sm text-slate-400 mb-1">Estimated Cost Savings</div>
-          <div className="text-4xl font-bold text-white mb-2">$124K</div>
+          <div className="text-4xl font-bold text-white mb-2">${Math.round(124 * (tabProgress / 100))}K</div>
           <div className="text-xs text-emerald-500">Based on reduced rework</div>
         </div>
         <div className="bg-gradient-to-br from-blue-900/40 to-slate-800 rounded-lg p-6 border border-blue-500/30 text-center">
           <div className="text-blue-400 mb-2 flex justify-center"><Clock size={24} /></div>
           <div className="text-sm text-slate-400 mb-1">Time to Value</div>
-          <div className="text-4xl font-bold text-white mb-2">3 Mo</div>
+          <div className="text-4xl font-bold text-white mb-2">{(3 * (tabProgress / 100)).toFixed(1)} Mo</div>
           <div className="text-xs text-blue-400">Payback period</div>
         </div>
         <div className="bg-gradient-to-br from-indigo-900/40 to-slate-800 rounded-lg p-6 border border-indigo-500/30 text-center">
           <div className="text-indigo-400 mb-2 flex justify-center"><Shield size={24} /></div>
           <div className="text-sm text-slate-400 mb-1">Risk Reduction</div>
-          <div className="text-4xl font-bold text-white mb-2">45%</div>
+          <div className="text-4xl font-bold text-white mb-2">{Math.round(45 * (tabProgress / 100))}%</div>
           <div className="text-xs text-indigo-400">Lower compliance failure probability</div>
         </div>
       </div>
@@ -640,11 +729,16 @@ export const DemoJourneyPage: React.FC = () => {
           <div key={i} className="bg-slate-800 rounded-lg p-5 border border-slate-700 hover:bg-slate-750 transition-colors">
             <h3 className="text-slate-300 font-medium text-sm h-10 mb-4">{domain.name}</h3>
             <div className="flex items-end justify-between mb-2">
-              <span className={`text-3xl font-bold text-${domain.color}-400`}>{domain.score}</span>
+              <span className={`text-3xl font-bold text-${domain.color}-400`}>
+                {(domain.score * (tabProgress / 100)).toFixed(1)}
+              </span>
               <span className="text-xs text-slate-500 pb-1">/ 5.0</span>
             </div>
             <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-              <div className={`bg-${domain.color}-500 h-1.5 rounded-full`} style={{ width: `${(domain.score / 5) * 100}%` }}></div>
+              <div 
+                className={`bg-${domain.color}-500 h-1.5 rounded-full transition-all duration-300`} 
+                style={{ width: `${(domain.score / 5) * tabProgress}%` }}
+              ></div>
             </div>
           </div>
         ))}
@@ -668,7 +762,9 @@ export const DemoJourneyPage: React.FC = () => {
           <div key={i} className="bg-slate-800 rounded-lg p-6 border border-slate-700 flex flex-col items-center text-center">
             <div className={`w-32 h-32 rounded-full border-8 ${q.ring} border-t-transparent border-l-transparent flex items-center justify-center mb-4 transform -rotate-45`}>
               <div className="transform rotate-45">
-                <span className={`text-3xl font-bold ${q.color}`}>{q.score}%</span>
+                <span className={`text-3xl font-bold ${q.color}`}>
+                  {Math.round(q.score * (tabProgress / 100))}%
+                </span>
               </div>
             </div>
             <h3 className="text-slate-200 font-medium">{q.label}</h3>
@@ -1351,10 +1447,6 @@ export const DemoJourneyPage: React.FC = () => {
           </div>
 
           <div className="bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl flex flex-col min-h-[700px] relative">
-            {/* Localized Tour Dim Backdrop */}
-            {isTourActive && isHighlightActive && (
-              <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-[4px] z-40 transition-all duration-500 pointer-events-none rounded-xl" />
-            )}
             {/* Tool Header */}
             <div className="bg-slate-800/80 border-b border-slate-700 p-4 flex flex-col gap-3">
               <div className="flex items-center justify-between">
