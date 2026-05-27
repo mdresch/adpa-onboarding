@@ -69,13 +69,13 @@ const TOUR_STEPS = [
     tab: 'Action Plan',
     highlightSelector: 'sprint-board',
     featureName: "Sequenced Milestone Board",
-    description: "Automatically compiles recommendations into timeboxed agile sprint milestones.",
+    description: "Automatically compiles recommendations into timeboxed Agile sprint milestones.",
   },
   {
     tab: 'Baseline Comparison',
     highlightSelector: 'baseline-center',
     featureName: "Semantic Version Baseline Control",
-    description: "Performs differential entity matching to detect scope drift across project life-cycle versions.",
+    description: "Performs differential entity matching to detect scope drift across project lifecycle versions.",
   }
 ];
 
